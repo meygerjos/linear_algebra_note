@@ -1,0 +1,1081 @@
+\documentclass[12pt]{article}
+
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{chngcntr}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\newcounter{axmmain}
+\newtheorem{axminner}{Axiom}[axmmain]
+\makeatletter
+\renewcommand{\theaxminner}{%
+  \arabic{axmmain}.\@arabic{\numexpr\value{axminner}-1\relax}%
+}
+\makeatother
+\newenvironment{axm}
+ {\stepcounter{axmmain}\axminner}
+ {\endaxminner}
+\newenvironment{axm*}
+ {\axminner}
+ {\endaxminner}
+
+\newcommand*{\oldneg}{\mathord{\sim}}
+\DeclareMathOperator{\spann}{span}
+\DeclareMathOperator{\Dom}{Dom}
+\DeclareMathOperator{\Cod}{Cod}
+\DeclareMathOperator{\Ime}{Ime}
+
+\setlength\parindent{0pt}
+
+\newcounter{prmc}
+\newcounter{dfnc}
+\newcounter{thmc}
+\newcounter{exc}
+\newcounter{vcbc}
+
+\newtheorem{vcb}[vcbc]{Vocabulary}
+\newtheorem{grt}[prmc]{Grant}
+\newtheorem{prm}[prmc]{Primitive Notion}
+\newtheorem{dfn}[prmc]{Definition}
+\newtheorem{prp}[thmc]{Proposition}
+\newtheorem{thm}[thmc]{Theorem}
+\newtheorem{cor}[thmc]{Corollary}
+\newtheorem{lem}[thmc]{Lemma}
+\newtheorem{ex}[exc]{Example}
+
+\title{Linear Algebra Notes}
+\author{Joshua Meyers}
+
+\begin{document}
+
+\date{\today}
+\maketitle
+
+\section{Where you are in your mathematical education}
+
+This is a time in your mathematical education where it is no longer
+enough to compute the right answer.  Now you have to write convincing
+arguments that the right answer is the right answer.  Different
+universities handle this transition different ways, and there is much
+controversy about how it should be done.  Often there is a ``bridge''
+course, which goes by many different names, with the purpose of being
+a bridge from procedural to proof-based mathematics.  My personal
+opinion is that students should make the transition by taking a
+propositional and predicate logic course (with a book such as
+\textit{The Logic Book} by Bergmann and Moor) and a set theory course
+(with a book such as \textit{Na\"{i}ve Set Theory} by Halmos, or
+\textit{Set Theory and Logic} by Stoll).  Another approach has
+students taking a course specifically in proving stuff (with a book
+such as \textit{How to Prove It}, by Velleman).  Some professors,
+however, think that it is hard to learn to prove things without having
+a subject to prove things about, so they like to teach proof in the
+context of an upper-division course such as Linear Algebra, Analysis,
+or Topology.
+
+At this stage, when students are learning to be rigorous (precise in
+their statements and airtight in their reasoning), it is important for
+them to be as rigorous as possible.  They should try to make every
+step in their proofs utterly incontestable, and every statement they
+make should be completely unambiguous and accurate in its meaning.
+
+Once this stage is done, and rigor becomes second-nature, there is a
+third stage of mathematical education, the ``post-rigorous'' stage.
+In this stage, students talk more visually and intuitively, confident
+that at any point, if they needed to, they could translate their
+high-level discourse into rigorous, detailed proofs.
+
+See this post for more information about these three stages of
+mathematical education:
+https://terrytao.wordpress.com/career-advice/theres-more-to-mathematics-than-rigour-and-proofs/
+
+\section{How to Study Linear Algebra}
+
+General ideas:
+\begin{itemize}
+  \item Copy a textbook or other source into your notebook.  Don't
+    copy blindly, make sure you understand what you are writing.  If
+    you like, you can change the wording to your preference, or use
+    more/less symbols.  By doing this you make sure that you
+    understand every word of the text. When you are practiced enough,
+    you will be able to write it out from memory/figuring it out
+    again. 
+  \item Think of questions.  Try to answer them yourself.  If that
+    doesn't work, ask a fellow student, a teacher, or
+    math.stackexchange.com.  Answering your own questions is
+    infinitely more profitable than answering questions a teacher
+    assigns to you, because your own questions directly address the
+    weak points in your understanding, whereas teacher-assigned
+    questions are someone else's guesses at what these weak points
+    are.  
+  \item Don't be a pushover and believe things just because your
+    teacher/book said so.  If you read or hear something that doesn't
+    make sense, there's a very real possibility that it's wrong.
+    Question everything!
+  \item Find a good environment and mental state for study.  It's hard
+    to study math if you are distracted. 
+  \item Have a growth-mindset rather than a fixed-mindset.  [add more detail]
+  \item Talk about mathematics with other people.  It is very
+    difficult, nigh impossible, to learn mathematics without doing
+    this. 
+  \item Value certainty and precision.  In mathematics we have the
+    amazing luxury of saying exactly what we mean and being absolutely
+    certain that it's true.  A mathematics student who doesn't make
+    use of these luxuries is missing a profound experience which is
+    not available anywhere else in their life.  
+  \item Value your own reasoning.  It is all you have.  To learn math
+    is to create mathematics in your own mind, which is different than
+    anybody else's, so your mathematics will not be quite the same as
+    anyone else's.  Don't trivialize your reasoning in favor of the
+    reasoning of others; instead bring the reasoning of others into
+    your own reasoning by working to understand it.
+  \item Take responsibility for your own education.  You can't expect
+    school to do a good job, so if you really want to learn, you need
+    to find good resources yourself.  The internet has a lot of good
+    stuff, but, for math, books are better.  Some math books I really
+    like (ordered alphabetically by author):
+    \begin{itemize}
+    \item Axler, \textit{Linear Algebra Done Right}
+    \item Euclid, \textit{The Elements}
+    \item Hofstadter, \textit{G\"{o}del Escher Bach}
+    \item Lockhart, \textit{Measurement}
+    \item Nagel and Newman, \textit{G\"{o}del's Proof}
+    \item Russell, \textit{Introduction to Mathematical Philosophy}
+    \item Spivak, \textit{Calculus}
+    \end{itemize}
+\end{itemize}
+
+Specific ideas for linear algebra:
+\begin{itemize}
+  \item Learn to visualize linear algebra by watching 3Blue1Brown's
+    \textit{Essence of Linear Algebra}:
+    https://www.3blue1brown.com/essence-of-linear-algebra-page/
+  \item Read about vectors from a more concrete standpoint so the
+    abstraction we are studying is more meaningful.  A quick search on
+    google books finds this book which looks good
+    (https://books.google.com/books?id=W8jYBYTxu-MC),
+    but there are many other options as well.
+\end{itemize}
+
+Specific ideas for learning definitions:
+\begin{itemize}
+  \item Practice writing out the definition. 
+  \item Find equivalent definitions.  Learn proofs that they are
+    equivalent. A good source of equivalent definitions is playing
+    around with logical equivalency. 
+  \item Find examples of things that satisfy the definition.  Practice
+    proving that they satisfy it. 
+  \item Find pathological/degenerate cases.  These are things that
+    technically satisfy the definition, but are far from normal
+    intuitions about it.  For example, $0$ is technically a polynomial
+    because it is equal to $0x^2+0x+0$, and there is a vector space
+    which only has one element. 
+  \item Find examples of things that don't satisfy the definition.
+    Practice proving that they don't satisfy it. 
+  \item For each axiom in the definition, find something that
+    satisfies all the axioms but that one, and hence fails to satisfy
+    the definition.  This will show you why all the axioms are there.
+    In a good definition, none of the axioms are extraneous. 
+\end{itemize}
+
+To learn a theorem, you must learn both the statement of the
+theorem and a proof (or multiple proofs) of it.
+
+To learn the statement of a theorem:
+\begin{itemize}
+  \item Practice writing it out, of course. 
+  \item Find equivalent statements.  Learn proofs that they are equivalent. 
+  \item Think about things that satisfy the hypotheses of the theorem,
+    and verify that they do in fact satisfy the theorem's
+    conclusion. The point of this is to build an intuition of what the
+    theorem is saying and why that would be true.  
+  \item Try in vain to come up with a counterexample to the theorem so
+    you can see why it's impossible. (Or maybe you'll succeed and find
+    a problem with the theorem that nobody else noticed!)
+  \item See what happens if you weaken or remove some of the
+    hypotheses of the theorem.  Does the conclusion still hold?
+\end{itemize}
+
+To learn a proof:
+\begin{itemize}
+  \item Make sure you understand (at least to some degree) the
+    statement of a theorem before learning a proof of it.  It's very
+    hard to understand a proof if you don't first understand what it's
+    a proof of. 
+  \item Practice copying out the proof.  When you are practiced
+    enough, you will be able to do this from memory/figuring it out
+    again. 
+  \item Are all the assumptions of the theorem used in the proof?  Is
+    it possible to weaken any assumptions and have the theorem
+    continue to hold? 
+  \item Take a particular example of something that satisfies the
+    hypotheses of the theorem and run it through the proof to see how
+    the proof works. 
+  \item Take something that doesn't satisfy one of the hypotheses of
+    the theorem and try to run it through the proof.  Does it still
+    work? Otherwise, what fails? 
+  \item Try to express the proof in your mind as a single idea, rather
+    than a sequence of many ideas.  You will know that you really
+    understand the proof when you can do this.
+  \item Relate your understanding of the proof to your understanding
+    of the statement of the theorem. 
+  \item Learn other proofs of the same statement.  Try to make up other proofs!
+\end{itemize}
+
+\section{Glossary of Words}
+
+\begin{description}
+
+  \item[Assume, Suppose] These words introduce assumptions.  There are
+    two reasons we would assume something in a proof.  Let $P$ and $Q$
+    be propositions.
+    \begin{itemize}
+      \item To prove $P\implies Q$, we can assume $P$ and deduce $Q$.
+        Once we have deduced $Q$ inside the scope of $P$, we discharge
+        the assumption of $P$ and conclude that $P\implies Q$.
+      \item To prove $P$, we can assume $\oldneg P$ and deduce a
+        contradiction.  Once we have seen that we can prove a
+        contradiction within the scope of the assumption of $\oldneg
+        P$, we know that that scope is no good, so we conclude $P$.
+    \end{itemize}
+  
+  \item[Cartesian product] Let $S$ and $T$ be sets.  Then the
+    Cartesian product of $S$ and $T$, denoted $S\times T$, is the set
+    of all ordered pairs wiith first element in $S$ and second element
+    in $T$.  In other words, $S\times T\coloneqq \{(s,t)|s\in S\wedge
+    t\in T\}$.\\
+
+    We can generalize this notion to more than two sets.  Let $A$,
+    $B$, and $C$ be sets.  First notice that (given that $A$, $B$, and
+    $C$ are nonempty) $A\times (B\times C)\neq (A\times B)\times C$.
+    This is because the elements of $A\times (B\times C)$ are ordered
+    pairs whose first element is in $A$ and whose second element is an
+    ordered pair in $B\times C$, whereas the elements of $(A\times
+    B)\times C$ are ordered pairs whose first element is an ordered
+    pair in $A\times B$ and whose second element is in $C$.\\
+
+    Although $(A\times B)\times C$ and $A\times (B\times C)$ are not
+    equal, they are isomorphic. \\
+
+    To avoid ambiguity we define $A\times B\times C$ (without
+    parentheses) as the set of all ordered triples whose first element
+    is from $A$, second from $B$, and third from $C$.  In other
+    words, $$A\times B\times C \coloneqq \{(a,b,c)|a\in A, b\in B,
+    c\in C\}$$
+
+    Similarly, for sets $S_1,S_2,\ldots S_n$, we define
+
+    $$S_1\times S_2\times\cdots\times S_n = \{(s_1,s_2,\ldots
+    s_n)|s_i\in S_i\textrm{ for }i=1,2,\ldots n\}$$
+
+  \item[Cartesian power] Given a set $S$ and a natural number $n$, we
+    define $S^n=S\times S\times\cdots\times S$, where the symbol
+    ``$S$'' is repeated $n$ times.  Equivalently, $S^n$ is the set of
+    all n-tuples of elements of $S$.
+
+  \item[Closed] A set $S$ is closed under a function $f$ iff
+    $(\forall x\in S)(f(x)\in S)$.  A set is closed under a binary
+    operation $\star$ iff $(\forall x,y\in S)(x\star y\in S)$.
+  
+  \item[Contain, In, Belongs to] Let $A$ be the set of all animals and let
+    $j$ be me, Joshua Meyers.  The following statements are
+    equivalent:
+    \begin{itemize}
+    \item I, Joshua Meyers, am an animal. 
+    \item $j$ is an element of $A$. 
+    \item $A$ contains $j$. 
+    \item $j$ is contained in $A$. 
+    \item $j$ is in $A$.
+    \item $j$ belongs to $A$.
+    \item $j\in A$. 
+    \item $A\ni j$. 
+    \end{itemize}
+
+  \item[Definition] A definition is a precise statement of the meaning
+    of a term.  Every other property that the term has is expected to
+    logically follow from the definition; if this is not the case,
+    then it is a bad definition.  Sometimes I give a couple,
+    equivalent definitions.  You should pick the one you like the most
+    to use as \textit{the} definition, and only use others once you
+    have proved that they are equivalent to \textit{the} definition.
+
+  \item[Equation] An equation is a statement that two things are
+    equal.  It can always be written in the form
+    $$\mathcal{P}=\mathcal{Q}$$ where $\mathcal{P}$ and $\mathcal{Q}$
+    are expressions.
+    
+  \item[Equipped, Together with, Along with] These phrases are
+    used to introduce additional structure.  A set $S$ equipped with a
+    binary operation $\cdot:S\times S\rightarrow S$ is really an
+    ordered pair $(S,\cdot)$.  The word ``equipped'' lets us
+    metonymically refer to the ordered pair $(S,\cdot)$ by its first
+    element $S$.  Examples:
+    \begin{itemize}
+    \item Let $S$ be the set $\{a,b,c\}$ equipped with a binary
+      operation $\cdot:S\times S\rightarrow S$.  Let $T$ be the set
+      $\{a,b,c\}$ equipped with a different binary operation $\star:
+      T\times T\rightarrow T$.  Then $S$ and $T$ are not equal because
+      the ordered pairs $(S,\cdot)$ and $(T,\star)$ are not equal.
+      However, \textit{as sets}, $S=T$.  The phrase ``as sets''
+      conveys that we are not using metonymy: we just mean the set $S$
+      by ``$S$'', not the ordered pair $(S,\cdot)$. 
+    \item An list is a finite set equipped with a total ordering.
+      Thus, two lists are equal iff they have the same elements and
+      the same ordering. 
+    \item A vector space $V$ over the field $\mathbb{F}$ is really a
+      set $V$ equipped with a binary operation $+:V\times V\rightarrow
+      V$ and a binary operation $\cdot \mathbb{F}\times V\rightarrow
+      V$ satisfying various axioms (these axioms are stated in the
+      definition of a vector space).  The symbol $V$ (unless we say
+      ``as a set'') refers not just to the set $V$, but to the ordered
+      triple $(V, +, \cdot)$. 
+    \end{itemize}
+
+  \item[Expression] An expression is a sequence of symbols that
+    evaluates to something.  For example, $2+2$ is an expression which
+    evaluates to $4$, but $2+2=5$ is not an expression, but rather a
+    proposition (though not a \textit{true} proposition!).  We could
+    make the argument that $2+2=4$ is an expression because it
+    evaluates to the truth-value True, but this is not generally done.
+
+  \item[Field] A field is a set $F$ equipped with two operations
+    $+:F\times F\rightarrow F$ (called ``addition'', though it might
+    be very different from ordinary addition) and $\cdot:F\times
+    F\rightarrow F$ (called ``multiplication'') such that
+    \begin{itemize}
+    \item The operations $+$ and $\cdot$ are associative and
+      commutative. In other words,
+      $$(\forall x,y\in F) (x+y=y+x)$$
+      and
+      $$(\forall x,y,z\in F) ((x+y)+z=x+(y+z)) $$
+    \item Both operations have identities:
+      $$(\exists 0\in F)(\forall x\in F) (x+0=x)$$
+      and
+      $$(\exists 1\in F)(\forall x\in F) (x\cdot 1=x)$$
+    \item Every element has an additive inverse:
+      $$(\forall x\in F)(\exists y\in F)(x+y=0)$$ Every element other
+      than the additive identity ($0$) has a multiplicative inverse:
+      $$(\forall x\in F,x\neq 0) (\exists y\in F)(x\cdot y=1)$$
+    \item Multiplication distributes over addition.  In
+      other words,
+      $$(\forall x,y,z\in F) (x\cdot (y+z)=x\cdot y + x\cdot z)$$
+    \item $0\neq 1$, where $0$ is an additive identity and $1$ is a
+      multiplicative identity.
+    \end{itemize}
+
+  \item[Free variable, Bound variable] In an expression or
+    proposition, a free variable is a variable that it is
+    syntactically possible (within the rules of syntax) to plug in
+    something for.  A bound variable is a variable that you can't plug
+    in something for.  Examples:
+    \begin{itemize}
+      \item In the equation $x+y=x$, both $x$ and $y$ are free
+        variables.  For example, we can plug in $x=3$ and $y=2$, to
+        get the equation $3+2=3$.  The resulting equation is not true,
+        but we can still plug in these values if we want!  There is
+        nothing syntactic that prevents us.
+      \item In the proposition $(\forall x)(x+y=x)$, $y$ is free, but
+        $x$ is bound.  Indeed, we can plug in $y=4$ to obtain the
+        proposition $(\forall x)(x+4=x)$.  But if tried to plug in,
+        say, $x=2$, we would end up writing $(\forall 2)$ which
+        doesn't make any sense.
+      \item In the expression $\{x\in\mathbb{N}|x\leq y\}$, $y$ is
+        free and $x$ is bound.
+    \end{itemize}
+    
+  \item[Function] A function is a relation $R$ such that no two
+    ordered pairs in $R$ have the same first element and different
+    second elements.  Equivalently, a function is a relation $R$ such
+    that for any $(x,y),(x',y')\in R$, $x=x'\implies y=y'$.
+
+  \item[Function from $S$ to $T$] Let $S,T$ be sets.  A function from
+    $S$ to $T$ is an ordered triple $(f,S,T)$ such that $f$ is a
+    relation between $S$ and $T$ and for all $x\in S$ there exists a
+    unique $y\in T$ such that $(x,y)\in f$. We metonymically refer to
+    the function $(f,S,T)$ with the symbol $f$.\\
+    
+    Notation: We generally write $f:S\rightarrow T$ instead of the
+    triple $(f,S,T)$.  This notation reads, ``$f$ from $S$ to
+    $T$''. \\
+
+    Notation: Given sets $S,T$, a function $f:S\rightarrow T$, and an
+    element $x\in S$, we write $f(x)$ to denote \textit{the} $y\in T$
+    such that $(x,y)\in f$. \\
+
+    Note: The domain and codomain of a function are considered part of
+    the data of the function.  Thus
+    $f:\mathbb{R}\rightarrow\mathbb{R}$ defined by $f(x)=x^2$ and
+    $g:\mathbb{C}\rightarrow\mathbb{C}$ defined by $g(x)=x^2$ are
+    different functions.
+
+  \item[Grant] (I made up this term) A grant is something that you
+    should grant, or take for granted.  If you want to stop taking it
+    for granted, you can read about it in the dedicated section (which
+    I may not have written yet), or online or in some book.
+    
+  \item[If...then, Only if, Implies] Let $P$ and $Q$ be propositions.
+    Then the following statements are equivalent:
+    \begin{itemize}
+    \item If $P$, then $Q$.
+    \item $P$ only if $Q$.
+    \item $Q$ if $P$.
+    \item $P$ implies $Q$.
+    \item $P\implies Q$.
+    \end{itemize}
+    Some suggestions for how to practice seeing that these are
+    equivalent: try plugging in actual propositions for $P$ and $Q$,
+    make truth tables.
+
+  \item[Indeed, In fact] These words introduce a justification for a
+    claim that has just been made.  Example:\\
+
+    Let $S$ be a subset of $\mathbb{N}$.  Then $S\subseteq
+    \mathbb{R}$.  In fact, if $x\in S$, then $x\in\mathbb{N}$, so
+    $x\in\mathbb{R}$.
+
+  \item[Introduce] To introduce a variable is to say what is referring
+    to.  Here are the ways to introduce the variable $x$.
+    \begin{itemize}
+    \item ``Let $x=2$''.  This completely pins down what $x$ refers to.
+      Now whenever we write ``$x$'' in the scope of this introduction,
+      we might as well have written ``$2$''.
+    \item ``Let $x$ be a vector in $U$.''.  This introduces $x$ as
+      being some arbitrary vector in $U$.  Under the scope of this
+      introduction, we know that $x$ is in $U$, and \textit{that's all
+        we know about it}!
+    \item ``Let $x\in U$ such that $f(x)=0$.''  This introduces $x$ as
+      some element of $U$ that satisfies $f(x)=0$.  Now $x$ is not
+      completely arbitrary, as we have constrained it with a ``such
+      that''.  We know two things about it, but again, nothing else.
+      Everything we say under this introduction should hold for every
+      vector $x\in U$ that satisfies $f(x)=0$.
+    \end{itemize}
+    
+    
+  \item[Let, Where] A proposition preceded by one of these words is
+    true because you say so.  This is done in definitions and
+    declarations.  The following statements are equivalent:
+    \begin{itemize}
+    \item Let $f(x)=x^2+1$.  Then $f(2)=5$. 
+    \item $f(x)\coloneqq x^2+1$.  Then $f(2)=5$. 
+    \item We have $f(2)=5$, where $f(x)=x^2+1$. 
+    \end{itemize}
+    The following statements are equivalent:
+    \begin{itemize}
+      \item Let $x$ be a number such that $x\neq 1$.  Then
+        $\frac{x-1}{x-1}=1$.
+      \item We have $\frac{x-1}{x-1}=1$, where $x$ is a number with
+        $x\neq 1$.
+    \end{itemize}
+
+  \item[Logical Operation] A logical operation is an operation whose
+    inputs are propositions and whose output is a proposition.  A
+    logical operation is required to be truth-functional.
+
+  \item[Linear combination].  Let $V$ be a vector space over the field
+    $\mathbb{F}$, let $v_1,v_2,\ldots v_n$ be vectors in $V$, and let
+    $\alpha_1,\alpha_2,\ldots\alpha_n$ be scalars in $\mathbb{F}$.
+    Then $\alpha_1v_1+\alpha_2v_2+\cdots+\alpha_nv_n$ is a linear
+    combination of $v_1,v_2,\ldots v_n$.
+    
+  \item[Linear relation] Let $V$ be a vector space over the field
+    $\mathbb{F}$.  A linear relation is an equation
+    $\alpha_1v_1+\cdots+\alpha_nv_n$, where
+    $\alpha_1,\ldots\alpha_n\in\mathbb{F}$ and $v_1,\ldots v_n\in V$
+    are left as free variables. \\
+
+    %% Two equivalent definitions:
+
+    %% \begin{itemize}
+    %%   \item Let $V$ be a vector space.  A n-ary relation $R\subseteq
+    %%     V^n$ is a linear relation iff there are
+    %%     $\alpha_1,\alpha_2,\ldots\alpha_n\in\mathbb{R}$ such that for
+    %%     $(v_1, v_2,\ldots v_n)\in V^n$, $(v_1, v_2,\ldots v_n)\in R$
+    %%     iff $\alpha_1v_1+\alpha_2v_2+\cdots+\alpha_nv_n=0$.
+    %%   \item Let $V$ be a vector space.  A n-ary relation $R\subseteq
+    %%     V^n$ is a linear relation iff it is of the
+    %%     form $$R=\{(v_1,v_2,\ldots v_n)\in V^n |
+    %%     \alpha_1v_1+\alpha_2v_2+\cdots\alpha_nv_n=0\}$$, where
+    %%     $\alpha_1,\alpha_2,\ldots\alpha_n\in\mathbb{F}$.
+    %% \end{itemize}
+
+    It is called \textit{trivial} iff
+    $\alpha_1=\alpha_2=\cdots=\alpha_n=0$, and \textit{nontrivial} iff
+    it is not trivial. \\
+
+    Note: A linear relation is not technically a relation in the sense
+    of the word defined in this index, since it is an equation rather
+    than a set.  I could make a definition that makes a linear
+    relation a relation, but that would depart from how people
+    generally use the term ``linear relation''.
+    
+  \item[Metonymy] This is a word from linguistics.  Metonymy is a
+    figure of speech in which something is referred to by the name of
+    something else associated with it.  Examples:
+    \begin{itemize}
+      \item ``Get your ass over here'' is commanding not that just the
+        ass be brought over here, but that the entire person be
+        brought over here. We metonymically refer to the person by
+        their ass. 
+      \item ``The Whitehouse has decided to move forward with the
+        plans.''  It is not really the building that has decided
+        anything, but the federal government.  We metonymically refer
+        to the federal government by the Whitehouse. 
+    \end{itemize}
+
+  \item[Operation] A binary operation is a function which takes two
+    inputs and gives one output, for example $+$ takes two inputs and
+    adds them together to obtain a single output.  \\
+
+    But our definition of fuunction says that it takes a single input!
+    Well, we can get around that by having a binary operation take a
+    single input which is an ordered pair.  So we can describe, for
+    example, the addition operation on $\mathbb{R}$ as a function
+    $\mathbb{R}\times\mathbb{R}\rightarrow\mathbb{R}$.
+    
+  \item[Overloading] This is a word from computer science.  A symbol
+    is overloaded when it is given multiple meanings depending on the
+    types of the other symbols it interacts with.  Examples:
+    \begin{itemize}
+      \item When $A$ and $B$ are numbers, $A\times B$ denotes the
+        product of the numbers $A$ and $B$, but when $A$ and $B$ are
+        sets, $A\times B$ denotes the cartesian product of $A$ and
+        $B$. 
+      \item Let $V$ and $W$ be vector spaces over the field
+        $\mathbb{R}$.  Now the symbols $+$ and $\cdot$ are triply
+        overloaded.  Indeed, consider the expression $A+B$.
+        \begin{itemize}
+          \item If $A$ and $B$ are
+            both in $V$, then $+$ denotes the vector sum operation
+            equipping $V$. 
+          \item If $A$ and $B$ are both in $W$, then $+$ denotes the
+            vector sum operation equipping $W$. 
+          \item If $A$ and $B$ are both in $\mathbb{R}$, then $+$
+            denotes the ordinary addition operation for numbers. 
+          \item If $A$ is in $V$ and $B$ is in $W$, then this
+            expression is a type error because we don't know what it
+            means to add together two vectors in different spaces. 
+        \end{itemize}
+        And consider the expression $A\cdot B$.
+        \begin{itemize}
+          \item If $A\in\mathbb{R}$ and $B\in V$, then $\cdot$ denotes
+            the scalar multiplication operation equipping $V$. 
+          \item If $A\in\mathbb{R}$ and $B\in W$, then $\cdot$ denotes
+            the scalar multiplication operation equipping $W$. 
+          \item If $A, B\in\mathbb{R}$, then $\cdot$ denotes
+            the ordinary multiplciation opereation for numbers. 
+          \item If $A,B\in V$, then this expression is a type error
+            unless we define dot product first before using it.  Dot
+            product is not part of the standard definition of a vector
+            space. 
+          \item If $A\in V$ and $B\in\mathbb{R}$, then this expression
+            is a type error unless we have first have the following
+            definition, letting us right-multiply vectors by scalars:
+            $$\textrm{For }A\in V, B\in\mathbb{R}\textrm{, let }A\cdot
+            B = B\cdot A\textrm{.}$$ 
+        \end{itemize}
+    \end{itemize}
+
+  \item[Presuppose] This is a word from linguistics.  If I ask ``why
+    did you steal my broom?''  I am presupposing that you did, indeed
+    steal my broom.  If you didn't, then you can answer me, ``your
+    question relies on the false presupposition that I stole your
+    broom, so I can't answer it.''  A presupposition is something that
+    must be supposed before a statement or question can make sense.\\
+
+    An example from math: The expression ``the largest element of
+    $S$'' presupposes that $S$ has a largest element.  Some sets
+    don't, for example the open interval $(0,1)$.  The statement ``the
+    largest element of (0,1) is less than $1$'' cannot be affirmed or
+    denied, because either of these stances would involve discussing
+    an object that does not exist. 
+    
+  \item[Property] Given a property $P$ and an object $x$, we write
+    $Px$ to mean that $x$ has the property $P$.  Properties express
+    the same information as sets.  For example, the property of being
+    even expresses the same information as the set of all even
+    numbers.  Here is how to translate in general between the language
+    of properties and the language of sets:
+    \begin{description}
+    \item[To translate from a property $P$ to a set:] Take the set $S\coloneqq\{x|Px\}$.
+    \item[To translate from a set $S$ to a property:] Take the
+      property $Px\coloneqq x\in S$.
+    \end{description}
+    As you can verify, there is no translation error: if we start with
+    a property, translate it to a set, and then translate that set
+    back to a property, we get just the property we started with.  And
+    if we start with a set, translate it to a property, and then
+    translate that property back to a set, we get just the same set
+    that we started with. \\
+
+    Given a property $P$ and an object $x$, $Px$ is a proposition.
+    Thus properties can be thought of as functions that output
+    propositions.
+
+  \item[Proposition, Statement] A proposition is something that is
+    either true or false.  For example, $2+2=5$ is a proposition
+    because it is false, but $2+2$ is not, since it is not true or
+    false.  Rather, $2+2$ is an expression. \\
+
+    A statement is a particular way of stating a proposition.  For
+    example, $IV+I=V$ and $4+1=5$ are two statements of the same
+    proposition.  The distinction between ``statement'' and
+    ``proposition'' is not very important for our purposes, so the
+    words are all but used interchangeably.
+
+  \item[Referent] I use the word ``chalk'' to refer to the physical
+    substance chalk.  That physical substance is the \textit{referent}
+    of the word ``chalk''.
+    
+  \item[Relation] A relation is a set of ordered pairs.  For example,
+    the set $\{(x,y)|x,y\in\mathbb{R}, x\textrm{ is less than }y\}$ is
+    the set of all ordered pairs of real numbers whose first element
+    is less than their second element.  This set is called the
+    ``less-than'' relation and the symbol $<$ is used for it.
+    Notation: Let $R$ be a relation.  We write $xRy$ to mean that
+    $(x,y)\in R$.  That is why we are able to write $x<y$ instead of
+    the hard-to-read $(x,y)\in <$.
+  
+  \item[Relation between] Here are two equivalent definitions:
+    \begin{itemize}
+    \item A relation between the sets $S$ and $T$ is a subset of $S\times T$.
+    \item A relation between the sets $S$ and $T$ is a relation $R$
+      such that for all ordered pairs $(x,y)\in R$ we have $x\in S$, $y\in T$.
+    \end{itemize}
+    Notation: Let $R\subseteq S\times T$ be a relation.  For $s\in S$,
+    $t\in T$, we write $sRt$ to mean $(s,t)\in R$. 
+    Example:  $<$ is the less than relation, and it is This the
+    convention that we are using when we write, for example, $x\leq y$
+    instead of $(x,y)\in\leq$.
+
+%  \item[$n$-ary Relation] An $n$-ary relation is a set of $n$-tuples.
+%    An $n$-ary relation between the sets $S_1,S_2,\ldots S_n$ is a
+%    subset of $S_1\times S_n\times\cdots\times S_n$.
+
+  \item[Satisfies] We say that an object ``satisfies'' a proposition
+    with a free variable iff, when we plug in the object for the free
+    variable, the resulting proposition is true.
+
+  \item[Scalar] A scalar is an element of a field, in the context of a
+    vector space over that field.
+
+  \item[Scope] The scope of an assumption is the region of the page
+    where we are operating under the assumption.  After an assumption
+    is discharged, we are not in its scope anymore, and cannot use it.
+    Similarly, a variable bound by a quantifier is only bound in the
+    scope of the quantifier.  Variable introductions also have scope,
+    outside of which the variable ceases to be introduced.  Examples:
+
+    \begin{itemize}
+      \item In the statement $(\forall
+        x\in\mathbb{Z})(x-1\in\mathbb{Z})\wedge(\exists
+        x\in\mathbb{Z})(x+x=x)$, some of the instances of the symbol
+        $x$ are within the scope of a universal quantifier, and some
+        are within the scope of an existential quantifier.
+      \item In the statement $(\forall
+        x\in\mathbb{Z}(x-1\in\mathbb{Z})\wedge (x+x=x)$, the last
+        three instances of the symbol $x$ are free variables: the
+        parentheses make clear than they are not within the scope of
+        $(\forall x\in\mathbb{Z})$.
+      \item The order of quantifiers matters.  For example, let $L$ be
+        the ``love'' relation, i.e. the set of all ordered pairs
+        $(x,y)$ such that $x$ and $y$ are people and $x$ loves $y$.
+        Then $(\forall x)(\exists y)xLy$ means that for every person
+        $x$, there's some person $y$ whom they love.  However,
+        $(\exists y)(\forall x)xLy$ means that there is a particular
+        person, $y$, whom everybody loves, as in they all love the
+        same person!  The difference between these statements is which
+        of the quantifiers is in the scope of the other.
+      \item ``Let $x=0$.  Then $x+2=2$.  But now let $x$ be an
+        arbitrary number in $\mathbb{R}$.  Now $x+2=2$ is not
+        necessarily true.''  The word ``now'' let us know that the
+        scope of the introduction ``$x=0$'' had ended, and a new
+        introduction begun.
+    \end{itemize}
+    
+  \item[Subset, Superset, Include] Let $H$ be the set of all humans.
+    The following statements are equivalent:
+    \begin{itemize}
+    \item Every human is an animal. 
+    \item Every element in $H$ is an element of $A$. 
+    \item $H$ is a subset of $A$. 
+    \item $A$ is a superset of $H$. 
+    \item $H$ is included in $A$. 
+    \item $A$ includes $H$. 
+    \item $H\subseteq A$. 
+    \item $A\supseteq H$. 
+    \end{itemize}
+  
+  \item[Such that, S.t., Which, With] These words are for constraining by a
+    property.  The following statements are equivalent:
+    \begin{itemize}
+    \item $x$ is an integer which satisfies $x^2=1$. 
+    \item $x$ is an integer such that $x^2=1$. 
+    \item $x$ is an integer s.t. $x^2=1$. 
+    \item $x$ is an integer such that $x^2=1$ is true. 
+    \item $x$ is an integer with $x^2=1$. 
+    \item $x\in \{x\in\mathbb{Z} | x^2=1\}$. 
+    \end{itemize}
+
+  \item[Syntax vs. Semantics] These words are from linguistics.
+    Syntax refers to the patterns by which words and symbols fit
+    together, regardless of their meaning, whereas semantics refers to
+    their meaning.  For example:
+
+    \begin{itemize}
+      \item The sentence ``Colorless green ideas sleep furiously.''
+        has fine syntax, but its semantics is bonkers.  This is a
+        classic linguistic example sentence from Chomsky (I think).
+      \item The sentence ``I am eaten a sandwich the the.'' is
+        syntactically wrong, so it's not even clear what the semantics
+        is.
+    \end{itemize}
+
+  \item[The] This word presupposes that there is exactly one of
+    something, and then refers to it.  For example, if I say, ``who is
+    the person you have come to see'', I am presupposing that there is
+    exactly one person you have come to see, and then I am referring
+    to this person.  It is an error to use ``the'' when there is zero
+    of something (e.g. ``the odd number divisible by $2$'') or when
+    there are more than one of something (e.g. ``the even number'').\\
+
+    The condition that there is exactly one thing with property $P$
+    decomposes into the conjunction of two conditions: \\
+
+    There is exactly one thing with property $P$ iff (there is at
+    least one thing with property $P$) and (there is at most one thing
+    with property $P$).  The first condition is called existence and
+    the second is called uniqueness.
+
+  \item[Truth-functional] A function that takes a proposition as an
+    argument is truth-functional iff it depends only on the
+    truth-value of the proposition.  For example, the function ``I
+    believe $P$'' is not truth-functional because it is possible to
+    have two different propositions with the same truth-value, one of
+    which I believe and the other of which I don't (a person's beliefs
+    can be inconsistent).  However, ``$P$ and $Q$'' is
+    truth-functional because all you need to know to know whether it
+    is true or false is the truth-values of $P$ and $Q$.
+
+  \item[Truth-value] There are two truth-values: True and False.  
+    
+  \item[Tuple] An ordered list.  A $2$-tuple is an ordered pair, a
+    $3$-tuple is an ordered triple, a $4$-tuple is an ordered
+    quadruple, etc.  An $n$-tuple is an ordered list of length $n$.
+
+  \item[Variable] A variable is a symbol that can refer to many
+    different things. $2$ is not a variable, but $x$ is.  A variable
+    is like a pronoun or deictic (``this'', ``that'', ``there'' are
+    deictics).  If a variable is not either bound or introduced, it is
+    not clear what it is referring to.
+    \begin{itemize}
+      \item Is ``x=2'' true or false?  Well it depends what $x$ is.
+        Since we haven't introduced $x$, we have no idea.
+      \item ``Does he have brown eyes?''  Well, again, I can't answer
+        this without knowing who you're talking about.
+      \item ``For all $x,y\in V$, $x+y=y+x$.''  This is okay.
+        Although, we haven't introduced $x$ and $y$, we have bound
+        them with quantifiers.
+    \end{itemize}
+    
+  \item[Vector] A vector is an element of a vector space.
+
+\end{description}
+
+\section{Glossary of Symbols}
+
+\begin{description}
+
+  \item[$\ldots$, $\cdots$] This is the ellipsis.  It is written to
+    abbreviate a sequence. 
+    \begin{itemize}
+      \item $a_1, a_2, \ldots , a_5$ is short for
+        $a_1, a_2, a_3, a_4, a_5$. 
+      \item $a_1+a_2+\cdots+a_5$ is short for $a_1+a_2+a_3+a_4+a_5$. 
+      \item $a_1-a_2-\cdots-a_5$ is short for $a_1-a_2-a_3-a_4-a_5$. 
+      \item $a_1a_2\cdots a_5$ is short for $a_1a_2a_3a_4a_4$. 
+      \item $a_1+a_2+a_3+\cdots$ is not short for anything that can be
+        written down, but it means the same thing as
+        $\sum_{i=1}^\infty a_i$. 
+    \end{itemize}
+      
+  \item[$\{,\}$] These are the curly brackets, and they are used to
+    express sets in two different ways: 
+    \begin{itemize}
+      \item[Extensional notation] $\{a_1, a_2,\ldots a_n\}$ is
+        the set which contains $a_i$ for $i=1,2,\ldots n$, and nothing
+        else. 
+      \item[Set-builder notation] $\{x\in S | Px \}$ is the set of all
+        $x$ that have the property $P$. We also can write $\{x\in S :
+        Px \}$ or $\{x\in S \textrm{such that} Px \}$.  The symbols
+        $:$ and $|$ are only interchangeable with the phrase ``such
+        that'' in this context. 
+    \end{itemize}
+
+  \item[$(,)$] These are the parentheses.  They are used in a bunch of
+    different senses:
+    \begin{description}
+    \item[Grouping] $(1-1)+1=1$, but $1-(1+1)=-1$. 
+    \item[Ordering] $(1,2,3)$ is an ordered triple, whereas
+      $\{1,2,3\}$ is a set and thus unordered.  $\{1,2,3\}=\{1,3,2\}$,
+      but $(1,2,3)\neq (1,3,2)$. 
+    \item[Open intervals] Let $x,y\in\mathbb{R}$.  Then $(x,y)$ is the
+      set of all real numbers which are greater than $x$ and less than
+      $y$.  In other words, $(x,y)\coloneqq\{z\in\mathbb{R} | x<z<y
+      \}$. 
+    \end{description}
+    
+  \item[$\mathbb{N}$] This is the set of all natural numbers. 
+
+  \item[$\mathbb{R}$] This is the set of all real numbers. 
+
+  \item[$\mathbb{C}$] This is the set of all complex numbers. 
+
+  \item[$\forall$] This is the universal quantifier.  Letting $S$ be a
+    set and $P$ be a property, the following statements are
+    equivalent: 
+    \begin{itemize}
+    \item $(\forall x\in S)(Px)$ 
+    \item For all $x\in S$, $Px$. 
+    \item For all $x$ in $S$, $x$ has the property $P$. 
+    \item Every element of $S$ has the property $P$. 
+    \item Each element of $S$ has the property $P$. 
+    \end{itemize}
+
+  \item[$\exists$] This is the existential quantifier.  Letting $S$ be
+    a set and $P$ be a property, the following statements are
+    equivalent: 
+    \begin{itemize}
+    \item $(\exists x\in S)(Px)$ 
+    \item For at least one $x\in S$, $Px$. 
+    \item For some $x\in S$, $Px$. 
+    \item At least one element of $S$ has the property $P$. 
+    \end{itemize}
+
+  \item[$\wedge,\vee$] These symbols mean ``and'' and ``or''.  They
+    are binary logical operations called conjunction and disjunction
+    respectively.  Let $P$ and $Q$ be propositions.  Then $P\wedge Q$
+    is the proposition that both $P$ and $Q$ are true and $P\vee Q$ is
+    the proposition that at least one of $P$ and $Q$ is true (it
+    includes the possibility that they are both true).
+
+  \item[$\implies$] This is a binary logical operation means
+    ``if...then''.  The requirement that it be entirely
+    truth-functional makes it really weird, and not correspond to the
+    conditional in ordinary English.  $P\implies Q$ is the proposition
+    that it is not the case that $P$ is true and $Q$ is false.  Here
+    are two reasons why this concept is useful:
+    \begin{itemize}
+      \item Let $P$ and $Q$ be properties (think, e.g. $Px\coloneqq
+        x\textrm{ is a human}$, $Qx\coloneqq x\textrm{ is an
+          animal}$).  Then $(\forall x)(Px\implies Qx)$ iff
+        $\{x|Px\}\subseteq \{x|Qx\}$.
+      \item Let $P$ and $Q$ be propositions.  Then $P\implies Q$ iff
+        it is possible to prove $Q$ under the assumption $P$.
+    \end{itemize}
+    
+  \item[$\cup,\cap,-$] These are the binary set operations.  They are
+    called union, intersection, and set difference respectively.  They
+    are defined by
+    \begin{itemize}
+    \item $S\cup T \coloneqq \{x | x\in S \wedge x\in T\}$ 
+    \item $S\cap T \coloneqq \{x | x\in S \vee x\in T\}$ 
+    \item $S-T \coloneqq \{x | x\in S \wedge x\not\in T\}$ 
+    \end{itemize}
+
+  \item[$\times$] This is an overloaded symbol for products.  When its
+    operands are numbers, it can denote an ordinary product, but after
+    elementary mathematics this is generally denoted by $\cdot$ or
+    juxtaposition instead.  When its operands are sets, it denotes
+    cartesian product.  When its operands are vectors in
+    $\mathbb{R}^3$, it denotes cross product.
+
+    \end{description}
+    
+\section{Vector Spaces}
+
+\begin{grt}
+
+  Let $\mathbb{F}$ be either $\mathbb{R}$ or $\mathbb{C}$.  The
+  following should be granted for both sets.
+  
+  \begin{itemize}
+  \item The set $\mathbb{F}$ is closed under addition and multiplication.  In other words,
+    $$(\forall x,y\in \mathbb{F}) (x+y\in\mathbb{F}\wedge
+    xy\in\mathbb{F})$$
+  \item The set $\mathbb{F}$ is closed under minus.  In other words,
+    $$(\forall x\in \mathbb{F}) (-x\in\mathbb{F})$$
+  \item The set $\mathbb{F}-\{0\}$ is closed under reciprocal.  In other
+    words,
+    $$(\forall x\in \mathbb{F}-\{0\}) (\frac{1}{x}\in\mathbb{F})$$
+    Or, what is the same,
+    $$(\forall x\in \mathbb{F} \textrm{ with } x\neq 0) (\frac{1}{x}\in\mathbb{F})$$
+  \item In $\mathbb{F}$, addition and multiplication and
+    associative and commutative. In other words,
+    $$(\forall x,y\in \mathbb{F}) (x+y=y+x)$$
+    and
+    $$(\forall x,y,z\in \mathbb{F}) ((x+y)+z=x+(y+z)) $$
+  \item In $\mathbb{F}$, $0$ is the additive identity and $1$ is the
+    multiplicative identity. In other words,
+    $$(\forall x\in\mathbb{F}) (x+0=x)$$
+    and
+    $$(\forall x\in\mathbb{F}) (x\cdot 1=x)$$
+  \item In $\mathbb{F}$, minus serves as an 
+    additive inverse.  In other words,
+    $$(\forall x\in\mathbb{F}) (x+(-x)=0)$$ In $\mathbb{F}-\{0\}$,
+    reciprocal serves as a multiplicative inverse.  In other words,
+    $$(\forall x\in\mathbb{F}-\{0\}) (x\cdot\frac{1}{x}=1)$$
+    or, what is the same,
+    $$(\forall x\in\mathbb{F}\textrm{ with }x\neq 0)(x\cdot\frac{1}{x}=1)$$
+  \item In $\mathbb{F}$, multiplication distributes over addition.  In
+    other words,
+    $$(\forall x,y,z\in\mathbb{F}) (x\cdot (y+z)=x\cdot y + x\cdot z)$$
+  \end{itemize}
+
+  On account of these properties, $\mathbb{R}$ and $\mathbb{C}$, when
+  equipped with addition and multiplication, are fields.  They are the
+  only fields that we will talk about in this class.
+\end{grt}
+  
+\begin{dfn}
+  A vector space $V$ over a field $\mathbb{F}$ is a set $V$ equipped
+  with two operations, $+:V\times V\rightarrow V$ (called vector
+  addition) and $\cdot:\mathbb{F}\times V\rightarrow V$ (called scalar
+  multiplication) satisfying the following axioms: (notice that we are
+  overloading the symbols $+$ and $\cdot$, which will continue to be
+  used to denote addition and multiplication in $\mathbb{F}$ in
+  addition to their new meanings) 
+  \begin{itemize}
+  \item Vector addition is associative and commutative, and has identity and inverse.  In other words,
+    $$ (\forall u,v,w\in V)(u+v)+w=u+(v+w)$$
+    $$ (\forall u,v\in V)u+v=v+u$$
+    $$ (\exists 0\in V)(\forall v\in V)v+0=v$$
+    $$ (\forall v\in V)(\exists u\in V)v+u=0$$ (The symbol $0$ is now
+    overloaded, as both $\mathbb{F}$ and $V$ have an element called
+    $0$.  We will know which one we mean from context.)
+  \item Associativity:
+    $$ (\forall a,b\in\mathbb{F}, v\in V)(a\cdot b)\cdot
+    v=a\cdot(b\cdot v)$$ Notice that the symbol $\cdot$ is overloaded
+    and means two different things in this law.  When its operands are
+    both in $\mathbb{F}$, it denotes the multiplication operation of
+    the field $\mathbb{F}$.  When it has one operand in $\mathbb{F}$
+    and one in $V$, it denotes a new operation, scalar multiplication,
+    which is introduced in this definition.
+  \item Multiplicative identity:
+    $$ (\forall v\in V) 1\cdot v=v$$ Thus $1$ is an identity not only
+    for the multiplication of the field, but also for scalar
+    multiplication.
+  \item Scalar multiplication distributes over both the addition in
+    the field and vector addition.  In other words,
+    $$(\forall a,b\in\mathbb{F}, v\in V) (a+b)\cdot v=a\cdot v+ b\cdot v$$
+    $$(\forall a\in\mathbb{F}, u,v\in V) a\cdot (u+v)=a\cdot u+b\cdot v$$
+  \end{itemize}  
+\end{dfn}
+
+\begin{dfn}
+  Here are some equivalent definitions of subspace.
+  \begin{itemize}
+    \item Let $V$ be a vector space.  A subset $U\subseteq V$ (read
+      ``subset U of V'') is a subspace of $V$ iff it includes the zero
+      vector and it is closed under vector addition and scalar
+      multiplication. 
+    \item Let $V$ be a vector space over the field $\mathbb{F}$.  A
+      subset $U\subseteq V$ (read ``subset U of V'') is a subspace of
+      $V$ iff $0\in U$, $(\forall x,y\ in U)(x+y\in U)$, and $(\forall
+      x\in U,\alpha\in\mathbb{F})(\alpha x\in U)$. 
+    \item Let $V$ be a vector space over the field $\mathbb{F}$.  A
+      subspace $U$ of $V$ is a nonempty subset of $V$ that is closed
+      under vector addition and scalar multiplication. 
+    \item Let $(V,+,\cdot)$ be a vector space over the field
+      $\mathbb{F}$.  A subspace of $(V,+,\cdot)$ is a vector space
+      $(U,+_U,\cdot_U)$ such that $U\subseteq V$ and for all $u,u'\in
+      U$ we have $u+_uu'=u+u'$ and for all $u\in U$,
+      $\alpha\in\mathbb{F}$ we have $\alpha \cdot u=\alpha\cdot_U u$.
+  \end{itemize}
+\end{dfn}
+
+\section{Linear Independence and Span}
+
+\begin{dfn}
+  Here are some equivalent definitions of linear independence.
+  \begin{itemize}
+    \item Let $V$ be a vector space over the field $\mathbb{F}$.  Let
+      $v_1,v_2,\ldots v_n$ all be vectors in $V$.  Then $v_1,
+      v_2,\ldots v_n$ are linearly independent iff $(\forall
+      \alpha_1,\alpha_2, \ldots
+      \alpha_n\in\mathbb{F})(\alpha_1v_1+\alpha_2v_2+\cdots+\alpha_nv_n=0\implies
+      \alpha_1=\alpha_2=\cdots=\alpha_n=0)$.
+    \item Let $V$ be a vector space over the field $\mathbb{F}$.  Let
+      $v_1,v_2,\ldots v_n$ all be vectors in $V$.  Then the list
+      $v_1,v_2,\ldots v_n$ is linearly independent iff for all
+      $\alpha_1,\alpha_2,\ldots\alpha_n\in\mathbb{F}$,
+      $\alpha_1v_1+\alpha_2v_2+\cdots+\alpha_nv_n=0$ only if
+      $\alpha_1=\alpha_2=\cdots=\alpha_n=0$.
+    \item Let $V$ be a vector space over the field $\mathbb{F}$.  Let
+      $v_1, v_2,\ldots v_n$ be vectors in $V$.  Then the vectors $v_1,
+      v_2,\ldots v_n$ are linearly independent iff they have no
+      nontrivial linear relation.
+  \end{itemize}
+\end{dfn}
+
+\begin{dfn}
+  Here is a defiition of ``span'' as a noun.\\
+
+  Let $V$ be a vector space over the field $\mathbb{F}$.  Let
+  $v_1,v_2,\ldots v_n$ all be vectors in $V$.  Then the span of
+  $v_1,v_2,\ldots v_n$, denoted $\spann(v_1,v_2,\ldots v_n)$ is the
+  set of all linear combinations of $v_1,v_2,\ldots v_n$.  In other
+  words,
+  $$\spann(v_1,v_2,\ldots v_n)\coloneqq
+  \{\alpha_1v_1+\alpha_2v_2+\cdots+\alpha_nv_n |
+  \alpha_i\in\mathbb{F}\textrm{ for }i=1,2,\ldots n\}$$
+\end{dfn}
+
+\begin{dfn}
+  Here are some equivalent definitions of ``span'' as a verb.
+  \begin{itemize}
+    \item Let $V$ be a vector space over the field $\mathbb{F}$.  Let
+      $v_1,v_2,\ldots v_n$ all be vectors in $V$.  Then $v_1,
+      v_2,\ldots v_n$ span $V$ iff $(\forall v\in V)(\exists
+      \alpha_1,\alpha_2,\ldots\alpha_n\in\mathbb{F})(v=\alpha_1v_1+\alpha_2v_2+\cdots+\alpha_nv_n)$.
+    \item Let $V$ be a vector space over the field $\mathbb{F}$.  Let
+      $v_1,v_2,\ldots v_n$ all be vectors in $V$.  Then the list $v_1,
+      v_2,\ldots v_n$ spans $V$ iff every vector in $V$ can be
+      expressed as a linear combination of $v_1,v_2,\ldots v_n$.
+    \item Let $V$ be a vector space over the field $\mathbb{F}$.  Let
+      $v_1,v_2,\ldots v_n$ all be vectors in $V$.  Then the list $v_1,
+      v_2,\ldots v_n$ spans $V$ iff $V=\spann(v_1,v_2,\ldots v_n)$.
+  \end{itemize}
+  If $V$ is a vector space and a list of vectors spans $V$, then we
+  also say that the list is \textit{spanning}.
+\end{dfn}
+
+\begin{dfn}
+  Let $V$ be a vector space.  A basis of $V$ is a list of vectors in
+  $V$ which is both linearly independent and spanning.
+\end{dfn}
+
+\section{Linear Transformations}
+
+\begin{dfn}
+  Let $V$ and $W$ be vector spaces over the same field $\mathbb{F}$.
+  A linear transformation $T:V\rightarrow W$ is a function
+  $T:V\rightarrow W$ such that
+  \begin{itemize}
+  \item For all $u,v\in V$ we have $T(u+v)=T(u)+T(v)$.
+  \item For all $v\in V$, $\alpha\in\mathbb{F}$ we have $T(\alpha\cdot
+    v)=\alpha\cdot T(v)$.
+  \end{itemize}
+
+  Notice that in this definition we have used the symbol $+$ once for
+  addition in $V$ and once for addition in $W$, and similarly for
+  $\cdot$.
+\end{dfn}
+
+
+
+\end{document}
